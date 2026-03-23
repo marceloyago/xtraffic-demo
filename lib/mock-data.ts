@@ -1,0 +1,53 @@
+export const DEMO_USER = {
+  email: 'demo@xtraffic.com.br',
+  password: 'demo123',
+  name: 'Conta Demo',
+  plan: 'Professional',
+  avatar: '',
+}
+
+export const mockCampaigns = [
+  { id:'c1', name:'XTraffic IA | Leads | BR', status:'ACTIVE', budget:50, spend:38.42, impressions:12840, clicks:387, ctr:3.01, cpm:29.92, cpa:15.20, roas:4.21, objective:'LEADS', adsets:3 },
+  { id:'c2', name:'Produto X | Conversões | SP', status:'ACTIVE', budget:120, spend:97.15, impressions:31200, clicks:1124, ctr:3.60, cpm:31.14, cpa:21.50, roas:6.83, objective:'CONVERSIONS', adsets:5 },
+  { id:'c3', name:'Remarketing | Visitantes | 7d', status:'ACTIVE', budget:30, spend:22.80, impressions:8430, clicks:312, ctr:3.70, cpm:27.05, cpa:11.20, roas:8.12, objective:'CONVERSIONS', adsets:2 },
+  { id:'c4', name:'Awareness | Marca | BR', status:'PAUSED', budget:80, spend:0, impressions:0, clicks:0, ctr:0, cpm:0, cpa:0, roas:0, objective:'REACH', adsets:2 },
+  { id:'c5', name:'E-commerce | Carrinho | Nac', status:'ACTIVE', budget:200, spend:178.90, impressions:58300, clicks:2140, ctr:3.67, cpm:30.68, cpa:18.70, roas:9.44, objective:'CONVERSIONS', adsets:8 },
+]
+
+export const mockDecisions = [
+  { id:'d1', campaign_name:'Produto X | Conversões | SP', decision:'ESCALAR', roas:6.83, spend:97.15, cpa:21.50, ctr:3.60, cpm:31.14, frequency:1.8, confidence:92, reason:'ROAS acima de 6x, CPA estável e frequência saudável. Recomendado aumentar orçamento em 30% para capturar mais volume.', created_at: new Date(Date.now()-3*3600000).toISOString() },
+  { id:'d2', campaign_name:'Remarketing | Visitantes | 7d', decision:'ESCALAR', roas:8.12, spend:22.80, cpa:11.20, ctr:3.70, cpm:27.05, frequency:2.1, confidence:88, reason:'Remarketing com ROAS excepcional. Audience ainda tem muito espaço. Escalar orçamento agressivamente.', created_at: new Date(Date.now()-5*3600000).toISOString() },
+  { id:'d3', campaign_name:'E-commerce | Carrinho | Nac', decision:'MANTER', roas:9.44, spend:178.90, cpa:18.70, ctr:3.67, cpm:30.68, frequency:2.4, confidence:85, reason:'Performance excelente e estável. Manter orçamento atual e monitorar frequência para evitar fadiga.', created_at: new Date(Date.now()-7*3600000).toISOString() },
+  { id:'d4', campaign_name:'XTraffic IA | Leads | BR', decision:'TESTAR', roas:4.21, spend:38.42, cpa:15.20, ctr:3.01, cpm:29.92, frequency:1.5, confidence:72, reason:'CPA aceitável mas ROAS pode melhorar. Testar novos criativos e audiências para otimizar.', created_at: new Date(Date.now()-9*3600000).toISOString() },
+  { id:'d5', campaign_name:'Awareness | Marca | BR', decision:'PAUSAR', roas:0, spend:0, cpa:0, ctr:0, cpm:0, frequency:0, confidence:95, reason:'Campanha pausada manualmente. Nenhuma entrega nas últimas 24h. Verificar configurações.', created_at: new Date(Date.now()-11*3600000).toISOString() },
+]
+
+export const mockAlerts = [
+  { id:'a1', severity:'success', title:'Campanha escalada com sucesso', description:'Watson executou escalonamento de 30% em "Produto X | Conversões | SP"', category:'WATSON', created_at: new Date(Date.now()-1*3600000).toISOString() },
+  { id:'a2', severity:'warning', title:'Frequência elevada detectada', description:'"E-commerce | Carrinho | Nac" com frequência 2.4 — risco de fadiga de audiência nas próximas 48h', category:'SHERLOCK', created_at: new Date(Date.now()-3*3600000).toISOString() },
+  { id:'a3', severity:'info', title:'Sherlock concluiu auditoria', description:'5 campanhas auditadas — 2 para escalar, 1 manter, 1 testar, 1 pausar', category:'SHERLOCK', created_at: new Date(Date.now()-6*3600000).toISOString() },
+  { id:'a4', severity:'critical', title:'CPA acima do limite', description:'"Produto X" CPA R$21.50 — 7% acima do target. Watson em análise.', category:'WATSON', created_at: new Date(Date.now()-9*3600000).toISOString() },
+]
+
+export const mockChartData = Array.from({length:14}, (_, i) => {
+  const d = new Date(); d.setDate(d.getDate()-13+i)
+  const base = 3000 + i*150 + Math.sin(i)*400
+  return {
+    date: d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),
+    gasto: +(base*0.12).toFixed(2),
+    conversoes: Math.floor(base/180),
+    roas: +(3.8 + i*0.15 + Math.sin(i)*0.3).toFixed(2),
+    impressoes: Math.floor(base),
+  }
+})
+
+export const mockStats = {
+  totalSpend: 337.27,
+  totalConversions: 89,
+  avgRoas: 7.15,
+  avgCpa: 16.42,
+  activeCampaigns: 4,
+  totalImpressions: 110770,
+  totalClicks: 3963,
+  avgCtr: 3.58,
+}
