@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XTraffic IA — by XLink Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#04071A;
+  --card:#081329;
+  --card2:rgba(8,19,41,0.95);
+  --gold:#946F40;
+  --cream:#F2E4B9;
+  --cyan:#00F5CC;
+  --green:#22c55e;
+  --red:#ef4444;
+  --orange:#f97316;
+  --blue:#3b82f6;
+  --purple:#a78bfa;
+  --muted:rgba(255,255,255,0.4);
+  --dim:rgba(255,255,255,0.06);
+}
+body{background:var(--navy);color:#fff;font-family:'Space Mono',monospace;min-height:100vh;overflow-x:hidden}
+.orb{font-family:'Orbitron',monospace}
+
+/* SIDEBAR */
+.layout{display:flex;min-height:100vh}
+.sidebar{width:220px;background:rgba(4,7,26,0.98);border-right:1px solid rgba(255,255,255,0.06);padding:20px 0;position:fixed;top:0;left:0;height:100vh;z-index:100;display:flex;flex-direction:column}
+.logo{padding:0 20px 24px;border-bottom:1px solid var(--dim)}
+.logo-title{font-family:'Orbitron',monospace;font-size:14px;font-weight:900;color:#fff;letter-spacing:2px}
+.logo-sub{font-size:9px;color:var(--gold);letter-spacing:1px;margin-top:2px}
+.ia-badge{display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:rgba(0,245,204,0.08);border:1px solid rgba(0,245,204,0.3);border-radius:20px;padding:4px 10px;font-size:9px;color:var(--cyan);font-family:'Orbitron',monospace;letter-spacing:1px}
+.ia-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+
+.nav{flex:1;padding:16px 0}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;font-size:11px;color:var(--muted);letter-spacing:1px;font-family:'Orbitron',monospace;transition:all 0.2s;border-left:3px solid transparent}
+.nav-item:hover{color:#fff;background:var(--dim)}
+.nav-item.active{color:var(--cyan);background:rgba(0,245,204,0.06);border-left-color:var(--cyan)}
+.nav-icon{font-size:14px;width:20px;text-align:center}
+
+.profile{padding:16px 20px;border-top:1px solid var(--dim);display:flex;align-items:center;gap:10px}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#6B4F2E);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.profile-name{font-size:11px;font-weight:700}
+.profile-email{font-size:9px;color:var(--muted)}
+
+/* MAIN */
+.main{margin-left:220px;flex:1;padding:28px}
+.page{display:none}
+.page.active{display:block}
+
+/* KPI CARDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px}
+.kpi{background:var(--card);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.gold::before{background:var(--gold)}
+.kpi.cyan::before{background:var(--cyan)}
+.kpi.green::before{background:var(--green)}
+.kpi.red::before{background:var(--red)}
+.kpi.blue::before{background:var(--blue)}
+.kpi.purple::before{background:var(--purple)}
+.kpi-label{font-size:9px;color:var(--muted);letter-spacing:2px;font-family:'Orbitron',monospace;margin-bottom:8px}
+.kpi-value{font-size:26px;font-weight:900;font-family:'Orbitron',monospace;line-height:1}
+.kpi-sub{font-size:10px;color:var(--muted);margin-top:6px}
+.kpi-change{font-size:10px;margin-top:4px}
+.up{color:var(--green)}
+.down{color:var(--red)}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid rgba(255,255,255,0.07);border-radius:14px;overflow:hidden;margin-bottom:16px}
+.card-header{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;color:rgba(255,255,255,0.5)}
+.card-body{padding:16px 20px}
+
+/* TABLE */
+.table{width:100%;border-collapse:collapse}
+.table th{font-size:8px;letter-spacing:2px;color:var(--muted);font-family:'Orbitron',monospace;padding:10px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.06)}
+.table td{padding:12px;font-size:11px;border-bottom:1px solid rgba(255,255,255,0.03)}
+.table tr:hover td{background:rgba(255,255,255,0.02)}
+.table tr:last-child td{border:none}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:5px;font-size:8px;font-family:'Orbitron',monospace;letter-spacing:1px;font-weight:700}
+.badge-escalar{background:rgba(34,197,94,0.12);color:var(--green);border:1px solid rgba(34,197,94,0.3)}
+.badge-manter{background:rgba(0,245,204,0.08);color:var(--cyan);border:1px solid rgba(0,245,204,0.2)}
+.badge-pausar{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.25)}
+.badge-testar{background:rgba(167,139,250,0.1);color:var(--purple);border:1px solid rgba(167,139,250,0.25)}
+.badge-watson{background:rgba(251,191,36,0.1);color:#fbbf24;border:1px solid rgba(251,191,36,0.25)}
+.badge-sherlock{background:rgba(96,165,250,0.1);color:#60a5fa;border:1px solid rgba(96,165,250,0.25)}
+
+/* HEALTH BAR */
+.health-bar{height:4px;border-radius:2px;background:rgba(255,255,255,0.08);overflow:hidden;margin-top:4px}
+.health-fill{height:100%;border-radius:2px;transition:width 1s ease}
+
+/* PAGE TITLE */
+.page-title{margin-bottom:24px}
+.page-title h1{font-family:'Orbitron',monospace;font-size:20px;font-weight:900;letter-spacing:3px}
+.page-title span{color:var(--cyan)}
+.page-title p{font-size:10px;color:var(--muted);letter-spacing:2px;margin-top:4px}
+
+/* DECISOES */
+.decision-item{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.decision-item:last-child{border:none}
+.decision-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.d-watson{background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.25)}
+.d-sherlock{background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.25)}
+.d-marcelo{background:rgba(0,245,204,0.12);border:1px solid rgba(0,245,204,0.25)}
+.decision-body{flex:1}
+.decision-title{font-size:12px;font-weight:700;margin-bottom:3px}
+.decision-desc{font-size:10px;color:var(--muted);line-height:1.6}
+.decision-meta{font-size:9px;color:rgba(255,255,255,0.25);margin-top:4px}
+
+/* CHARTS */
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.mini-stat{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);align-items:center}
+.mini-stat:last-child{border:none}
+.mini-stat-label{font-size:10px;color:var(--muted)}
+.mini-stat-value{font-size:13px;font-weight:700;font-family:'Orbitron',monospace}
+
+/* PROGRESS RING */
+.progress-container{display:flex;align-items:center;justify-content:center;padding:20px 0}
+.ring-wrap{position:relative;width:120px;height:120px}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-value{font-family:'Orbitron',monospace;font-size:22px;font-weight:900}
+.ring-label{font-size:8px;color:var(--muted);letter-spacing:1px;margin-top:2px}
+
+/* SHERLOCK ALERT */
+.alert-item{display:flex;gap:12px;padding:12px;border-radius:10px;margin-bottom:8px;align-items:flex-start}
+.alert-green{background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2)}
+.alert-orange{background:rgba(249,115,22,0.06);border:1px solid rgba(249,115,22,0.2)}
+.alert-cyan{background:rgba(0,245,204,0.05);border:1px solid rgba(0,245,204,0.15)}
+.alert-dot{width:8px;height:8px;border-radius:50%;margin-top:3px;flex-shrink:0}
+.dot-green{background:var(--green)}
+.dot-orange{background:var(--orange)}
+.dot-cyan{background:var(--cyan)}
+.alert-body{flex:1}
+.alert-title{font-size:11px;font-weight:700;margin-bottom:2px}
+.alert-desc{font-size:9px;color:var(--muted);line-height:1.6}
+
+/* STAT ROW */
+.stat-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.stat-pill{flex:1;min-width:120px;background:var(--dim);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:12px 16px}
+.stat-pill-label{font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:6px;font-family:'Orbitron',monospace}
+.stat-pill-value{font-size:18px;font-weight:900;font-family:'Orbitron',monospace}
+
+/* AGENT CARDS */
+.agent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.agent-card{background:var(--card);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:16px;text-align:center}
+.agent-emoji{font-size:32px;margin-bottom:8px;display:block}
+.agent-name{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--cyan);margin-bottom:4px}
+.agent-stat{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;color:#fff}
+.agent-desc{font-size:9px;color:var(--muted);margin-top:4px}
+
+/* CRIATIVO CARD */
+.criativo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.criativo-card{background:var(--card);border:1px solid rgba(148,111,64,0.15);border-radius:14px;overflow:hidden;cursor:pointer;transition:all 0.2s}
+.criativo-card:hover{border-color:rgba(148,111,64,0.4);transform:translateY(-2px)}
+.criativo-img{height:160px;display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;overflow:hidden}
+.criativo-overlay{position:absolute;bottom:0;left:0;right:0;padding:10px;background:linear-gradient(transparent,rgba(0,0,0,0.8));font-size:11px;font-weight:700}
+.criativo-info{padding:12px}
+.criativo-name{font-size:11px;font-weight:700;margin-bottom:4px}
+.criativo-meta{font-size:9px;color:var(--muted)}
+
+/* COUNTER ANIMATION */
+.counter{display:inline-block}
+.fade-in{animation:fadeIn 0.6s ease forwards;opacity:0}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.stagger-1{animation-delay:0.1s}
+.stagger-2{animation-delay:0.2s}
+.stagger-3{animation-delay:0.3s}
+.stagger-4{animation-delay:0.4s}
+.stagger-5{animation-delay:0.5s}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{width:60px}
+  .nav-item span{display:none}
+  .logo-title,.logo-sub,.ia-badge,.profile-name,.profile-email{display:none}
+  .main{margin-left:60px;padding:16px}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .chart-row{grid-template-columns:1fr}
+  .agent-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--gold),#6B4F2E);display:flex;align-items:center;justify-content:center;font-size:16px">⚡</div>
+      <div>
+        <div class="logo-title">XTraffic IA</div>
+        <div class="logo-sub">by XLink Digital</div>
+      </div>
+    </div>
+    <div class="ia-badge"><div class="ia-dot"></div>IA ATIVA</div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-item active" onclick="showPage('dashboard')"><span class="nav-icon">📊</span><span>Dashboard</span></div>
+    <div class="nav-item" onclick="showPage('campanhas')"><span class="nav-icon">🎯</span><span>Campanhas</span></div>
+    <div class="nav-item" onclick="showPage('decisoes')"><span class="nav-icon">🤖</span><span>Decisões IA</span></div>
+    <div class="nav-item" onclick="showPage('relatorio')"><span class="nav-icon">📈</span><span>Relatório</span></div>
+    <div class="nav-item" onclick="showPage('criativos')"><span class="nav-icon">🎨</span><span>Criativos IA</span></div>
+    <div class="nav-item" onclick="showPage('contas')"><span class="nav-icon">🔗</span><span>Contas</span></div>
+  </nav>
+
+  <div class="profile">
+    <div class="avatar">MC</div>
+    <div>
+      <div class="profile-name">Marcelo C.</div>
+      <div class="profile-email">Plano Enterprise</div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="page-title fade-in">
+    <h1 class="orb">INTELLIGENCE <span>CENTER</span></h1>
+    <p>VISÃO GERAL DO SISTEMA — ÚLTIMA ATUALIZAÇÃO HÁ 3 MIN</p>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi gold fade-in stagger-1">
+      <div class="kpi-label">INVESTIMENTO TOTAL</div>
+      <div class="kpi-value" style="color:var(--gold)">R$12.847</div>
+      <div class="kpi-sub">Últimos 30 dias</div>
+      <div class="kpi-change up">↑ 34% vs mês anterior</div>
+    </div>
+    <div class="kpi green fade-in stagger-2">
+      <div class="kpi-label">RECEITA GERADA</div>
+      <div class="kpi-value" style="color:var(--green)">R$74.280</div>
+      <div class="kpi-sub">Atribuída via pixel</div>
+      <div class="kpi-change up">↑ 89% vs mês anterior</div>
+    </div>
+    <div class="kpi cyan fade-in stagger-3">
+      <div class="kpi-label">ROAS MÉDIO</div>
+      <div class="kpi-value" style="color:var(--cyan)">5.78x</div>
+      <div class="kpi-sub">7 campanhas ativas</div>
+      <div class="kpi-change up">↑ 1.2x vs meta</div>
+    </div>
+    <div class="kpi blue fade-in stagger-4">
+      <div class="kpi-label">CTR MÉDIO</div>
+      <div class="kpi-value" style="color:var(--blue)">4.2%</div>
+      <div class="kpi-sub">Benchmark: 1.8%</div>
+      <div class="kpi-change up">↑ 133% acima média</div>
+    </div>
+    <div class="kpi purple fade-in stagger-5">
+      <div class="kpi-label">DECISÕES DA IA</div>
+      <div class="kpi-value" style="color:var(--purple)">847</div>
+      <div class="kpi-sub">Análises automáticas</div>
+      <div class="kpi-change up">↑ 23 ações hoje</div>
+    </div>
+    <div class="kpi gold fade-in stagger-1">
+      <div class="kpi-label">CPM MÉDIO</div>
+      <div class="kpi-value" style="color:var(--gold)">R$7,40</div>
+      <div class="kpi-sub">Benchmark: R$18,00</div>
+      <div class="kpi-change up">59% abaixo mercado</div>
+    </div>
+  </div>
+
+  <!-- Agentes -->
+  <div class="card fade-in stagger-2">
+    <div class="card-header">
+      <span class="card-title">AGENTES DE IA — STATUS OPERACIONAL</span>
+      <span style="font-size:9px;color:var(--cyan);font-family:'Orbitron',monospace">TODOS ATIVOS ✓</span>
+    </div>
+    <div class="card-body">
+      <div class="agent-grid">
+        <div class="agent-card">
+          <span class="agent-emoji">🔍</span>
+          <div class="agent-name">SHERLOCK</div>
+          <div class="agent-stat" style="color:var(--cyan)">156</div>
+          <div class="agent-desc">oportunidades identificadas</div>
+          <div style="margin-top:8px;font-size:9px;color:var(--green)">● Monitorando agora</div>
+        </div>
+        <div class="agent-card">
+          <span class="agent-emoji">⚡</span>
+          <div class="agent-name">WATSON</div>
+          <div class="agent-stat" style="color:var(--gold)">23</div>
+          <div class="agent-desc">ações executadas hoje</div>
+          <div style="margin-top:8px;font-size:9px;color:var(--green)">● Otimizando budgets</div>
+        </div>
+        <div class="agent-card">
+          <span class="agent-emoji">🎨</span>
+          <div class="agent-name">EDISON</div>
+          <div class="agent-stat" style="color:var(--purple)">41</div>
+          <div class="agent-desc">criativos gerados</div>
+          <div style="margin-top:8px;font-size:9px;color:var(--green)">● Gerando criativo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Últimas ações Watson -->
+  <div class="chart-row">
+    <div class="card fade-in">
+      <div class="card-header"><span class="card-title">WATSON — ÚLTIMAS AÇÕES</span></div>
+      <div class="card-body">
+        <div class="decision-item">
+          <div class="decision-icon d-watson">⚡</div>
+          <div class="decision-body">
+            <div class="decision-title">Budget escalado +25%</div>
+            <div class="decision-desc">Nutrição Premium atingiu ROAS 8.4x — Watson aumentou de R$120 para R$150/dia</div>
+            <div class="decision-meta">há 12 minutos · confiança 96%</div>
+          </div>
+        </div>
+        <div class="decision-item">
+          <div class="decision-icon d-watson">⚡</div>
+          <div class="decision-body">
+            <div class="decision-title">Criativo substituído</div>
+            <div class="decision-desc">CTR caiu 0.8% em Moda — Edison gerou 3 variações. Variação B subiu para 5.1%</div>
+            <div class="decision-meta">há 1 hora · confiança 91%</div>
+          </div>
+        </div>
+        <div class="decision-item">
+          <div class="decision-icon d-sherlock">🔍</div>
+          <div class="decision-body">
+            <div class="decision-title">Oportunidade detectada</div>
+            <div class="decision-desc">Segmento 35-44 anos convertendo 3.2x mais — Sherlock recomendou ajuste de público</div>
+            <div class="decision-meta">há 2 horas · impacto estimado +R$2.400/mês</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card fade-in">
+      <div class="card-header"><span class="card-title">ECONOMIA GERADA PELA IA</span></div>
+      <div class="card-body">
+        <div class="mini-stat">
+          <span class="mini-stat-label">Economizado em CPM</span>
+          <span class="mini-stat-value" style="color:var(--green)">R$ 4.847</span>
+        </div>
+        <div class="mini-stat">
+          <span class="mini-stat-label">Leads extra gerados</span>
+          <span class="mini-stat-value" style="color:var(--cyan)">1.284</span>
+        </div>
+        <div class="mini-stat">
+          <span class="mini-stat-label">Conversões extras</span>
+          <span class="mini-stat-value" style="color:var(--gold)">389</span>
+        </div>
+        <div class="mini-stat">
+          <span class="mini-stat-label">Budget realocado</span>
+          <span class="mini-stat-value" style="color:var(--purple)">R$ 3.200</span>
+        </div>
+        <div class="mini-stat">
+          <span class="mini-stat-label">Horas economizadas</span>
+          <span class="mini-stat-value" style="color:#fff">247h</span>
+        </div>
+        <div style="margin-top:16px;padding:14px;border-radius:10px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);text-align:center">
+          <div style="font-size:9px;color:var(--muted);margin-bottom:4px;font-family:'Orbitron',monospace">RETORNO SOBRE O PLANO</div>
+          <div style="font-family:'Orbitron',monospace;font-size:28px;font-weight:900;color:var(--green)">47x</div>
+          <div style="font-size:9px;color:var(--muted)">para cada R$1 investido no XTraffic</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CAMPANHAS -->
+<div class="page" id="page-campanhas">
+  <div class="page-title">
+    <h1 class="orb">CAMPANHAS <span>ATIVAS</span></h1>
+    <p>7 CAMPANHAS — IA MONITORANDO A CADA 6 HORAS</p>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-pill"><div class="stat-pill-label">TOTAL ATIVO</div><div class="stat-pill-value" style="color:var(--cyan)">7</div></div>
+    <div class="stat-pill"><div class="stat-pill-label">INVESTIDO HOJE</div><div class="stat-pill-value" style="color:var(--gold)">R$847</div></div>
+    <div class="stat-pill"><div class="stat-pill-label">ROAS HOJE</div><div class="stat-pill-value" style="color:var(--green)">6.1x</div></div>
+    <div class="stat-pill"><div class="stat-pill-label">LEADS HOJE</div><div class="stat-pill-value" style="color:var(--purple)">284</div></div>
+    <div class="stat-pill"><div class="stat-pill-label">VENDAS HOJE</div><div class="stat-pill-value" style="color:var(--green)">67</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">TODAS AS CAMPANHAS</span>
+      <button onclick="showPage('decisoes')" style="background:rgba(0,245,204,0.08);border:1px solid rgba(0,245,204,0.25);color:var(--cyan);padding:6px 12px;border-radius:7px;font-size:9px;cursor:pointer;font-family:'Orbitron',monospace">VER DECISÕES IA →</button>
+    </div>
+    <div style="overflow-x:auto">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>CAMPANHA</th>
+          <th>DECISÃO</th>
+          <th>ROAS</th>
+          <th>GASTO</th>
+          <th>CTR</th>
+          <th>RESULTADO</th>
+          <th>SAÚDE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div style="font-weight:700">Nutrição Premium</div>
+            <div style="font-size:9px;color:var(--muted)">Conv · BR-SP · R$150/dia</div>
+          </td>
+          <td><span class="badge badge-escalar">🚀 ESCALAR</span></td>
+          <td><span style="color:var(--green);font-family:'Orbitron',monospace;font-weight:700">8.4x</span></td>
+          <td style="font-family:'Orbitron',monospace">R$2.847</td>
+          <td style="color:var(--green)">5.1%</td>
+          <td>847 conversões</td>
+          <td>
+            <div style="font-size:10px;color:var(--green)">96 pts</div>
+            <div class="health-bar"><div class="health-fill" style="width:96%;background:var(--green)"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div style="font-weight:700">Academia Online</div>
+            <div style="font-size:9px;color:var(--muted)">Leads · BR-Sul · R$120/dia</div>
+          </td>
+          <td><span class="badge badge-escalar">🚀 ESCALAR</span></td>
+          <td><span style="color:var(--green);font-family:'Orbitron',monospace;font-weight:700">6.2x</span></td>
+          <td style="font-family:'Orbitron',monospace">R$1.840</td>
+          <td style="color:var(--green)">4.8%</td>
+          <td>1.240 leads</td>
+          <td>
+            <div style="font-size:10px;color:var(--green)">91 pts</div>
+            <div class="health-bar"><div class="health-fill" style="width:91%;background:var(--green)"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div style="font-weight:700">Curso Marketing Digital</div>
+            <div style="font-size:9px;color:var(--muted)">Conv · BR · R$130/dia</div>
+          </td>
+          <td><span class="badge badge-escalar">🚀 ESCALAR</span></td>
+          <td><span style="color:var(--green);font-family:'Orbitron',monospace;font-weight:700">5.4x</span></td>
+          <td style="font-family:'Orbitron',monospace">R$2.100</td>
+          <td style="color:var(--green)">4.2%</td>
+          <td>624 vendas</td>
+          <td>
+            <div style="font-size:10px;color:var(--green)">88 pts</div>
+            <div class="health-bar"><div class="health-fill" style="width:88%;background:var(--green)"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div style="font-weight:700">Infoproduto Lançamento</div>
+            <div style="font-size:9px;color:var(--muted)">Conv · BR · R$80/dia</div>
+          </td>
+          <td><span class="badge badge-escalar">🚀 ESCALAR</span></td>
+          <td><span style="color:var(--green);font-family:'Orbitron',monospace;font-weight:700">7.8x</span></td>
+          <td style="font-family:'Orbitron',monospace">R$890</td>
+          <td style="color:var(--green)">6.3%</td>
+          <td>312 vendas</td>
+          <td>
+            <div style="font-size:10px;color:var(--green)">94 pts</div>
+            <div class="health-bar"><div class="health-fill" style="width:94%;background:var(--green)"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div style="font-weight:700">E-commerce Moda</div>
+            <div style="font-size:9px;color:var(--muted)">Conv · BR · R$100/dia</div>
+          </td>
+          <td><span class="badge badge-manter">✅ MANTER</span></td>
+          <td><span style="color:var(--cyan);font-family:'Orbitron',monospace;font-weight:700">4.1x</span></td>
+          <td style="font-family:'Orbitron',monospace">R$1.613</td>
+          <td style="color:var(--cyan)">3.4%</td>
+          <td>389 vendas</td>
+          <td>
+            <div style="font-size:10px;color:var(--cyan)">79 pts</div>
+            <div class="health-bar"><div class="health-fill" style="width:79%;background:var(--cyan)"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div style="font-weight:700">Clínica Estética</div>
+            <div style="font-size:9px;color:var(--muted)">Leads · RJ · R$140/dia</div>
+          </td>
+          <td><span class="badge badge-manter">✅ MANTER</span></td>
+          <td><span style="color:var(--cyan);font-family:'Orbitron',monospace;font-weight:700">4.9x</span></td>
+          <td style="font-family:'Orbitron',monospace">R$2.200</td>
+          <td style="color:var(--cyan)">3.8%</td>
+          <td>986 agendamentos</td>
+          <td>
+            <div style="font-size:10px;color:var(--cyan)">82 pts</div>
+            <div class="health-bar"><div class="health-fill" style="width:82%;background:var(--cyan)"></div></div>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <div style="font-weight:700">SaaS B2B</div>
+            <div style="font-size:9px;color:var(--muted)">Tráfego · BR · R$120/dia</div>
+          </td>
+          <td><span class="badge badge-testar">🧪 TESTAR</span></td>
+          <td><span style="color:var(--purple);font-family:'Orbitron',monospace;font-weight:700">3.2x</span></td>
+          <td style="font-family:'Orbitron',monospace">R$1.857</td>
+          <td style="color:var(--cyan)">2.9%</td>
+          <td>12.847 cliques</td>
+          <td>
+            <div style="font-size:10px;color:var(--purple)">71 pts</div>
+            <div class="health-bar"><div class="health-fill" style="width:71%;background:var(--purple)"></div></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- DECISÕES IA -->
+<div class="page" id="page-decisoes">
+  <div class="page-title">
+    <h1 class="orb">DECISÕES <span>IA</span></h1>
+    <p>847 ANÁLISES AUTOMÁTICAS — WATSON + SHERLOCK + MARCELO</p>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-pill"><div class="stat-pill-label">WATSON HOJE</div><div class="stat-pill-value" style="color:var(--gold)">23 ações</div></div>
+    <div class="stat-pill"><div class="stat-pill-label">SHERLOCK HOJE</div><div class="stat-pill-value" style="color:var(--blue)">8 alertas</div></div>
+    <div class="stat-pill"><div class="stat-pill-label">TAXA ACERTO</div><div class="stat-pill-value" style="color:var(--green)">94%</div></div>
+    <div class="stat-pill"><div class="stat-pill-label">ESCALADAS</div><div class="stat-pill-value" style="color:var(--cyan)">23x</div></div>
+  </div>
+
+  <!-- Alertas Sherlock -->
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-header"><span class="card-title">🔍 SHERLOCK — ALERTAS ATIVOS</span><span style="font-size:9px;color:var(--green)">8 ALERTAS</span></div>
+    <div class="card-body">
+      <div class="alert-item alert-green">
+        <div class="alert-dot dot-green"></div>
+        <div class="alert-body">
+          <div class="alert-title">🚀 Nutrição Premium — Momento de escalar agora</div>
+          <div class="alert-desc">ROAS 8.4x por 72h consecutivas. Frequência 1.8x. Budget esgotando às 14h. Recomendo +30% de budget imediatamente.</div>
+        </div>
+        <span class="badge badge-escalar">ESCALAR</span>
+      </div>
+      <div class="alert-item alert-green">
+        <div class="alert-dot dot-green"></div>
+        <div class="alert-body">
+          <div class="alert-title">📈 Infoproduto Lançamento — CTR excepcional detectado</div>
+          <div class="alert-desc">CTR 6.3% — 3.5x acima do benchmark do nicho. Audiência semelhante identificada com 2.4M de alcance disponível.</div>
+        </div>
+        <span class="badge badge-escalar">OPORTUNIDADE</span>
+      </div>
+      <div class="alert-item alert-cyan">
+        <div class="alert-dot dot-cyan"></div>
+        <div class="alert-body">
+          <div class="alert-title">🔄 E-commerce Moda — Público 35-44 convertendo 3.2x mais</div>
+          <div class="alert-desc">Watson identificou segmentação de alto valor. Ajuste de público pode aumentar ROAS de 4.1x para estimados 6.8x.</div>
+        </div>
+        <span class="badge badge-manter">OTIMIZAR</span>
+      </div>
+      <div class="alert-item alert-orange">
+        <div class="alert-dot dot-orange"></div>
+        <div class="alert-body">
+          <div class="alert-title">⚠️ SaaS B2B — Frequência chegando a 3.1x</div>
+          <div class="alert-desc">Audiência saturando. Renovação de criativo recomendada nos próximos 2 dias para evitar queda de performance.</div>
+        </div>
+        <span class="badge badge-testar">ATENÇÃO</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Histórico de decisões -->
+  <div class="card">
+    <div class="card-header"><span class="card-title">⚡ WATSON — HISTÓRICO DE DECISÕES</span></div>
+    <div class="card-body">
+      <div class="decision-item">
+        <div class="decision-icon d-watson">⚡</div>
+        <div class="decision-body">
+          <div class="decision-title">Budget escalado: R$120 → R$150/dia (+25%)</div>
+          <div class="decision-desc">Nutrição Premium atingiu ROAS 8.4x por 72h. Watson escalou automaticamente. Resultado: +R$840 em receita no dia.</div>
+          <div class="decision-meta">hoje 09:14 · confiança 96% · APROVADO ✓</div>
+        </div>
+      </div>
+      <div class="decision-item">
+        <div class="decision-icon d-watson">⚡</div>
+        <div class="decision-body">
+          <div class="decision-title">Criativo substituído — Variação B aplicada</div>
+          <div class="decision-desc">CTR de E-commerce Moda caiu para 2.1%. Edison gerou 3 variações. Variação B (CTR 5.1%) foi aplicada automaticamente.</div>
+          <div class="decision-meta">hoje 06:30 · confiança 91% · APROVADO ✓</div>
+        </div>
+      </div>
+      <div class="decision-item">
+        <div class="decision-icon d-watson">⚡</div>
+        <div class="decision-body">
+          <div class="decision-title">Público atualizado — Acadêmicos adicionados</div>
+          <div class="decision-desc">Curso Marketing: Watson identificou professores universitários convertendo 4.8x. Segmento adicionado. ROAS subiu de 3.9x para 5.4x.</div>
+          <div class="decision-meta">ontem 22:00 · confiança 88% · APROVADO ✓</div>
+        </div>
+      </div>
+      <div class="decision-item">
+        <div class="decision-icon d-sherlock">🔍</div>
+        <div class="decision-body">
+          <div class="decision-title">Pausa preventiva — Clínica Estética (madrugada)</div>
+          <div class="decision-desc">Sherlock detectou queda de conversão entre 00h-06h. Campanha pausada automaticamente, economizando R$48. Reativada às 07h.</div>
+          <div class="decision-meta">ontem 00:05 · economia R$48 · AUTOMÁTICO ✓</div>
+        </div>
+      </div>
+      <div class="decision-item">
+        <div class="decision-icon d-marcelo">🧠</div>
+        <div class="decision-body">
+          <div class="decision-title">Marcelo consultado — Estratégia Q2</div>
+          <div class="decision-desc">Sistema consultou banco de aprendizados para projeção Q2. Estimativa: R$180.000 em receita com investimento de R$28.000.</div>
+          <div class="decision-meta">há 2 dias · confiança 87% · ROI PROJETADO 6.4x</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RELATÓRIO -->
+<div class="page" id="page-relatorio">
+  <div class="page-title">
+    <h1 class="orb">RELATÓRIO <span>PERFORMANCE</span></h1>
+    <p>ÚLTIMOS 30 DIAS — ATUALIZADO AUTOMATICAMENTE</p>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi gold">
+      <div class="kpi-label">TOTAL INVESTIDO</div>
+      <div class="kpi-value" style="color:var(--gold)">R$12.847</div>
+      <div class="kpi-change up">↑ 34%</div>
+    </div>
+    <div class="kpi green">
+      <div class="kpi-label">RECEITA TOTAL</div>
+      <div class="kpi-value" style="color:var(--green)">R$74.280</div>
+      <div class="kpi-change up">↑ 89%</div>
+    </div>
+    <div class="kpi cyan">
+      <div class="kpi-label">LUCRO LÍQUIDO</div>
+      <div class="kpi-value" style="color:var(--cyan)">R$61.433</div>
+      <div class="kpi-change up">↑ 124%</div>
+    </div>
+    <div class="kpi blue">
+      <div class="kpi-label">TOTAL DE LEADS</div>
+      <div class="kpi-value" style="color:var(--blue)">4.387</div>
+      <div class="kpi-change up">↑ 67%</div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="card">
+      <div class="card-header"><span class="card-title">ROAS POR CAMPANHA</span></div>
+      <div class="card-body">
+        <div style="position:relative;height:220px"><canvas id="chartRoas"></canvas></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">INVESTIMENTO vs RECEITA (R$)</span></div>
+      <div class="card-body">
+        <div style="position:relative;height:220px"><canvas id="chartInvest"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="card-title">CTR DIÁRIO — EVOLUÇÃO 30 DIAS</span></div>
+    <div class="card-body">
+      <div style="position:relative;height:180px"><canvas id="chartCtr"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- CRIATIVOS -->
+<div class="page" id="page-criativos">
+  <div class="page-title">
+    <h1 class="orb">CRIATIVOS <span>IA</span></h1>
+    <p>AGENTE EDISON — 41 CRIATIVOS GERADOS</p>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-pill"><div class="stat-pill-label">TOTAL GERADOS</div><div class="stat-pill-value" style="color:var(--purple)">41</div></div>
+    <div class="stat-pill"><div class="stat-pill-label">CTR MÉDIO</div><div class="stat-pill-value" style="color:var(--green)">4.7%</div></div>
+    <div class="stat-pill"><div class="stat-pill-label">MELHOR CTR</div><div class="stat-pill-value" style="color:var(--gold)">6.3%</div></div>
+    <div class="stat-pill"><div class="stat-pill-label">ATIVOS FB/IG</div><div class="stat-pill-value" style="color:var(--cyan)">18</div></div>
+  </div>
+
+  <div class="criativo-grid">
+    <div class="criativo-card" onclick="showPage('decisoes')">
+      <div class="criativo-img" style="background:linear-gradient(135deg,#1a0533,#2d1b69)">
+        <span style="font-size:48px">💪</span>
+        <div class="criativo-overlay">Nutrição Premium — Dor</div>
+      </div>
+      <div class="criativo-info">
+        <div class="criativo-name">Chega de suplemento caro sem resultado</div>
+        <div class="criativo-meta">CTR: <span style="color:var(--green)">6.3%</span> · ROAS: 8.4x · 847 conv.</div>
+      </div>
+    </div>
+    <div class="criativo-card" onclick="showPage('decisoes')">
+      <div class="criativo-img" style="background:linear-gradient(135deg,#0a2a1a,#0d5c33)">
+        <span style="font-size:48px">🎓</span>
+        <div class="criativo-overlay">Academia — Transformação</div>
+      </div>
+      <div class="criativo-info">
+        <div class="criativo-name">De R$1.500 para R$8.000/mês em 3 meses</div>
+        <div class="criativo-meta">CTR: <span style="color:var(--green)">5.8%</span> · ROAS: 6.2x · 1.240 leads</div>
+      </div>
+    </div>
+    <div class="criativo-card" onclick="showPage('decisoes')">
+      <div class="criativo-img" style="background:linear-gradient(135deg,#1a0a00,#4a2000)">
+        <span style="font-size:48px">📱</span>
+        <div class="criativo-overlay">Marketing — Prova Social</div>
+      </div>
+      <div class="criativo-info">
+        <div class="criativo-name">12.847 alunos já transformaram seus negócios</div>
+        <div class="criativo-meta">CTR: <span style="color:var(--green)">5.1%</span> · ROAS: 5.4x · 624 vendas</div>
+      </div>
+    </div>
+    <div class="criativo-card" onclick="showPage('decisoes')">
+      <div class="criativo-img" style="background:linear-gradient(135deg,#001a33,#003d7a)">
+        <span style="font-size:48px">💄</span>
+        <div class="criativo-overlay">Estética — Resultado</div>
+      </div>
+      <div class="criativo-info">
+        <div class="criativo-name">Você merece se sentir incrível toda semana</div>
+        <div class="criativo-meta">CTR: <span style="color:var(--cyan)">4.1%</span> · ROAS: 4.9x · 986 ag.</div>
+      </div>
+    </div>
+    <div class="criativo-card" onclick="showPage('decisoes')">
+      <div class="criativo-img" style="background:linear-gradient(135deg,#1a001a,#4a0047)">
+        <span style="font-size:48px">🛍️</span>
+        <div class="criativo-overlay">Moda — Urgência</div>
+      </div>
+      <div class="criativo-info">
+        <div class="criativo-name">Coleção nova — apenas 48h para garantir</div>
+        <div class="criativo-meta">CTR: <span style="color:var(--cyan)">3.4%</span> · ROAS: 4.1x · 389 vendas</div>
+      </div>
+    </div>
+    <div class="criativo-card" onclick="showPage('decisoes')">
+      <div class="criativo-img" style="background:linear-gradient(135deg,#0d1a00,#1f4000)">
+        <span style="font-size:48px">🚀</span>
+        <div class="criativo-overlay">Infoproduto — Lançamento</div>
+      </div>
+      <div class="criativo-info">
+        <div class="criativo-name">Método que gerou R$2M em 30 dias</div>
+        <div class="criativo-meta">CTR: <span style="color:var(--green)">6.3%</span> · ROAS: 7.8x · 312 vendas</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTAS -->
+<div class="page" id="page-contas">
+  <div class="page-title">
+    <h1 class="orb">CONTAS <span>CONECTADAS</span></h1>
+    <p>FACEBOOK ADS + INSTAGRAM — SINCRONIZANDO</p>
+  </div>
+
+  <div class="chart-row">
+    <div class="card">
+      <div class="card-header"><span class="card-title">CONTA FACEBOOK ADS</span><span style="font-size:9px;color:var(--green)">● CONECTADA</span></div>
+      <div class="card-body">
+        <div class="mini-stat"><span class="mini-stat-label">Conta</span><span class="mini-stat-value">MC Digital Mkt</span></div>
+        <div class="mini-stat"><span class="mini-stat-label">Status</span><span class="mini-stat-value" style="color:var(--green)">Ativa ✓</span></div>
+        <div class="mini-stat"><span class="mini-stat-label">Limite diário</span><span class="mini-stat-value" style="color:var(--gold)">R$1.200</span></div>
+        <div class="mini-stat"><span class="mini-stat-label">Gasto hoje</span><span class="mini-stat-value">R$847</span></div>
+        <div class="mini-stat"><span class="mini-stat-label">Pixel instalado</span><span class="mini-stat-value" style="color:var(--green)">Sim ✓</span></div>
+        <div class="mini-stat"><span class="mini-stat-label">Última sinc.</span><span class="mini-stat-value">há 3 min</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">SALDO DO GERENCIADOR</span></div>
+      <div class="card-body">
+        <div style="text-align:center;padding:20px 0">
+          <div style="font-size:9px;color:var(--muted);font-family:'Orbitron',monospace;letter-spacing:2px;margin-bottom:8px">SALDO DISPONÍVEL</div>
+          <div style="font-family:'Orbitron',monospace;font-size:40px;font-weight:900;color:var(--gold)">R$2.847</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:8px">Suficiente para 3 dias no ritmo atual</div>
+        </div>
+        <div style="padding:12px;border-radius:10px;background:rgba(0,245,204,0.05);border:1px solid rgba(0,245,204,0.15)">
+          <div style="font-size:10px;color:var(--muted);margin-bottom:4px">PROJEÇÃO 30 DIAS</div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:11px">Investimento estimado</span>
+            <span style="font-family:'Orbitron',monospace;color:var(--cyan)">R$25.410</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+            <span style="font-size:11px">Receita projetada</span>
+            <span style="font-family:'Orbitron',monospace;color:var(--green)">R$146.870</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  const items=['dashboard','campanhas','decisoes','relatorio','criativos','contas'];
+  const idx=items.indexOf(id);
+  document.querySelectorAll('.nav-item')[idx].classList.add('active');
+  if(id==='relatorio') initCharts();
+}
+
+let chartsInit=false;
+function initCharts(){
+  if(chartsInit)return; chartsInit=true;
+  const c1=new Chart(document.getElementById('chartRoas'),{
+    type:'bar',
+    data:{
+      labels:['Nutrição','Academia','Marketing','Infoproduto','E-comm','Estética','SaaS'],
+      datasets:[{label:'ROAS',data:[8.4,6.2,5.4,7.8,4.1,4.9,3.2],
+        backgroundColor:['rgba(34,197,94,0.7)','rgba(34,197,94,0.7)','rgba(34,197,94,0.7)','rgba(34,197,94,0.7)','rgba(0,245,204,0.6)','rgba(0,245,204,0.6)','rgba(167,139,250,0.6)'],
+        borderColor:['#22c55e','#22c55e','#22c55e','#22c55e','#00F5CC','#00F5CC','#a78bfa'],
+        borderWidth:2,borderRadius:6}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'rgba(255,255,255,0.4)',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'}},
+        y:{ticks:{color:'rgba(255,255,255,0.4)',font:{size:9},callback:v=>v+'x'},grid:{color:'rgba(255,255,255,0.05)'}}}
+    }
+  });
+  const c2=new Chart(document.getElementById('chartInvest'),{
+    type:'bar',
+    data:{
+      labels:['Nutrição','Academia','Marketing','Infoproduto','E-comm','Estética','SaaS'],
+      datasets:[
+        {label:'Investido',data:[2847,1840,2100,890,1613,2200,1857],backgroundColor:'rgba(148,111,64,0.6)',borderColor:'#946F40',borderWidth:2,borderRadius:4},
+        {label:'Receita',data:[23915,11408,11340,6942,6613,10780,5941],backgroundColor:'rgba(34,197,94,0.5)',borderColor:'#22c55e',borderWidth:2,borderRadius:4}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'rgba(255,255,255,0.4)',font:{size:9}},grid:{color:'rgba(255,255,255,0.05)'}},
+        y:{ticks:{color:'rgba(255,255,255,0.4)',font:{size:9},callback:v=>'R$'+v.toLocaleString('pt-BR')},grid:{color:'rgba(255,255,255,0.05)'}}}
+    }
+  });
+  const labels=[];
+  for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);labels.push(d.getDate()+'/'+String(d.getMonth()+1).padStart(2,'0'))}
+  const ctrs=[1.8,2.1,1.9,2.4,2.8,3.1,2.9,3.4,3.6,3.2,3.8,4.0,3.9,4.2,4.1,4.4,4.6,4.3,4.7,4.5,4.8,5.0,4.9,5.2,5.1,5.4,5.6,5.3,5.8,6.1];
+  const c3=new Chart(document.getElementById('chartCtr'),{
+    type:'line',
+    data:{labels,datasets:[{label:'CTR %',data:ctrs,borderColor:'#00F5CC',backgroundColor:'rgba(0,245,204,0.08)',borderWidth:2,pointRadius:0,fill:true,tension:0.4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{color:'rgba(255,255,255,0.3)',font:{size:8},maxTicksLimit:8},grid:{color:'rgba(255,255,255,0.04)'}},
+        y:{ticks:{color:'rgba(255,255,255,0.4)',font:{size:9},callback:v=>v.toFixed(1)+'%'},grid:{color:'rgba(255,255,255,0.05)'}}}
+    }
+  });
+}
+</script>
+</body>
+</html>
