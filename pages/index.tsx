@@ -1,3 +1,13 @@
+/**
+ * @owner   Welbert Cruz <welbertcruz12@gmail.com>
+ * @project XLink Digital — PLX Platform
+ * @repo    github.com/marceloyago
+ * @built   with Marcelo Yago | Claude (Anthropic)
+ *
+ * Unauthorized use or distribution is prohibited.
+ * © 2026 Welbert Cruz. All rights reserved.
+ */
+
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
