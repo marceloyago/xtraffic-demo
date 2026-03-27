@@ -143,26 +143,3 @@ export default function DashboardLayout({ children, title, description }:Props) 
         @media(min-width:769px){.sidebar-show{display:block!important;}.mobile-header{display:none!important;}}
         @media(max-width:768px){.sidebar-show{display:none!important;}.mobile-header{display:flex!important;}}
       `}</style>
-
-      {/* ── WELBERT CRUZ SIGNATURE ── */}
-      <div style={{
-        marginTop:'10px', paddingTop:'8px',
-        borderTop:'1px solid rgba(255,255,255,0.04)',
-        display:'flex', alignItems:'center', gap:'8px',
-        opacity:0.55, transition:'opacity 0.2s', cursor:'default',
-      }}
-      onMouseEnter={e=>(e.currentTarget.style.opacity='1')}
-      onMouseLeave={e=>(e.currentTarget.style.opacity='0.55')}
-      title="Co-desenvolvido por Welbert Cruz"
-      >
-        <div style={{width:'22px',height:'22px',borderRadius:'50%',background:'linear-gradient(135deg,rgba(0,245,204,0.2),rgba(148,111,64,0.2))',border:'1px solid rgba(0,245,204,0.3)',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
-          <span style={{fontFamily:"'Orbitron',sans-serif",fontSize:'8px',fontWeight:700,background:'linear-gradient(135deg,#00F5CC,#946F40)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>WC</span>
-        </div>
-        <div>
-          <div style={{fontFamily:"'Orbitron',sans-serif",fontSize:'8px',fontWeight:700,background:'linear-gradient(90deg,#00F5CC,#946F40)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',letterSpacing:'0.5px'}}>WELBERT CRUZ</div>
-          <div style={{fontSize:'9px',color:'rgba(242,228,185,0.35)',marginTop:'1px'}}>Developer & Builder</div>
-        </div>
-      </div>
-    </div>
-  )
-}
