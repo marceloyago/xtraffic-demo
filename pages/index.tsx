@@ -11,10 +11,11 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { TrendingUp, TrendingDown, Minus, Pause, DollarSign, Zap, MousePointer2, Activity, Shield, ScanSearch, Bell, X } from 'lucide-react'
 import DashboardLayout from '../components/DashboardLayout'
-import { mockStats, mockDecisions, mockAlerts, mockChartData } from '../lib/mock-data'
+import { mockStats, mockDecisions, mockAlerts, mockChartData, mockCreatives } from '../lib/mock-data'
 import { isLoggedIn } from '../lib/auth'
 
 const ResponsiveContainer = dynamic(() => import('recharts').then(m=>({default:m.ResponsiveContainer})), { ssr:false })
@@ -91,20 +92,25 @@ export default function Dashboard() {
       {/* Agent status */}
       <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'12px',marginBottom:'24px'}}>
         {[
-          {name:'Sherlock',status:'Auditando',color:'#00F5CC',desc: sherlockCountdown ? 'Próx: '+sherlockCountdown : 'Próx: 2h30'},
-          {name:'Watson',  status:'Standby',  color:'#3b82f6',desc:'2 ações hoje'},
-          {name:'Edison',  status:'Online',   color:'#a855f7',desc:'3 criativos'},
-          {name:'Tef',     status:'Online',   color:'#22c55e',desc:'Bot ativo'},
-        ].map(a=>(
-          <div key={a.name} style={{background:'linear-gradient(135deg,#0d1f3c,#081220)',border:'1px solid '+a.color+'22',borderRadius:'12px',padding:'12px 16px',display:'flex',alignItems:'center',gap:'10px'}}>
-            <div style={{width:'8px',height:'8px',borderRadius:'50%',background:a.color,boxShadow:'0 0 8px '+a.color,flexShrink:0}} />
-            <div>
-              <div style={{fontFamily:"'Orbitron',sans-serif",fontSize:'11px',fontWeight:'700',color:'#F2E4B9'}}>{a.name}</div>
-              <div style={{fontSize:'10px',color:a.color}}>{a.status}</div>
-              <div style={{fontSize:'10px',color:'rgba(242,228,185,0.4)'}}>{a.desc}</div>
+          {name:'Sherlock',status:'Auditando',color:'#00F5CC',desc: sherlockCountdown ? 'Próx: '+sherlockCountdown : 'Próx: 2h30', href:'/decisoes-ia'},
+          {name:'Watson',  status:'Standby',  color:'#3b82f6',desc:'2 ações hoje', href:null},
+          {name:'Edison',  status:'Online',   color:'#a855f7',desc: mockCreatives.filter(c=>c.status==='PUBLICADO').length+' criativos ativos', href:'/geracao'},
+          {name:'Tef',     status:'Online',   color:'#22c55e',desc:'Bot ativo', href:null},
+        ].map(a=>{
+          const inner = (
+            <div key={a.name} style={{background:'linear-gradient(135deg,#0d1f3c,#081220)',border:'1px solid '+a.color+'22',borderRadius:'12px',padding:'12px 16px',display:'flex',alignItems:'center',gap:'10px',textDecoration:'none',cursor:a.href?'pointer':'default',transition:'border-color 0.2s'}}>
+              <div style={{width:'8px',height:'8px',borderRadius:'50%',background:a.color,boxShadow:'0 0 8px '+a.color,flexShrink:0}} />
+              <div>
+                <div style={{fontFamily:"'Orbitron',sans-serif",fontSize:'11px',fontWeight:'700',color:'#F2E4B9'}}>{a.name}</div>
+                <div style={{fontSize:'10px',color:a.color}}>{a.status}</div>
+                <div style={{fontSize:'10px',color:'rgba(242,228,185,0.4)'}}>{a.desc}</div>
+              </div>
             </div>
-          </div>
-        ))}
+          )
+          return a.href
+            ? <Link key={a.name} href={a.href} style={{textDecoration:'none'}}>{inner}</Link>
+            : <div key={a.name}>{inner}</div>
+        })}
       </div>
 
       {/* Stats */}
