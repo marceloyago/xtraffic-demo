@@ -9,7 +9,7 @@
  */
 
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import { TrendingUp, TrendingDown, Minus, Pause, DollarSign, Zap, MousePointer2, Activity, Shield, ScanSearch, Bell, X } from 'lucide-react'
@@ -68,12 +68,22 @@ export default function Dashboard() {
   const [alerts, setAlerts] = useState(mockAlerts)
   const [mounted, setMounted] = useState(false)
   const [pulse, setPulse] = useState(false)
+  const [sherlockCountdown, setSherlockCountdown] = useState('')
+  const nextAuditRef = useRef(0)
 
   useEffect(() => {
     if (!isLoggedIn()) { router.push('/login'); return }
     setMounted(true)
-    const t = setInterval(()=>setPulse(p=>!p), 2000)
-    return ()=>clearInterval(t)
+    nextAuditRef.current = Date.now() + 2.5 * 3600 * 1000
+    const pulse_t = setInterval(()=>setPulse(p=>!p), 2000)
+    const countdown_t = setInterval(()=>{
+      const rem = Math.max(0, nextAuditRef.current - Date.now())
+      const totalSec = Math.floor(rem / 1000)
+      const h = Math.floor(totalSec / 3600)
+      const m = Math.floor((totalSec % 3600) / 60)
+      setSherlockCountdown(h > 0 ? `${h}h ${String(m).padStart(2,'0')}m` : `${String(m).padStart(2,'0')}:${String(totalSec%60).padStart(2,'0')}`)
+    }, 1000)
+    return ()=>{ clearInterval(pulse_t); clearInterval(countdown_t) }
   }, [])
 
   return (
@@ -81,7 +91,7 @@ export default function Dashboard() {
       {/* Agent status */}
       <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'12px',marginBottom:'24px'}}>
         {[
-          {name:'Sherlock',status:'Auditando',color:'#00F5CC',desc:'Próx: 2h30'},
+          {name:'Sherlock',status:'Auditando',color:'#00F5CC',desc: sherlockCountdown ? 'Próx: '+sherlockCountdown : 'Próx: 2h30'},
           {name:'Watson',  status:'Standby',  color:'#3b82f6',desc:'2 ações hoje'},
           {name:'Edison',  status:'Online',   color:'#a855f7',desc:'3 criativos'},
           {name:'Tef',     status:'Online',   color:'#22c55e',desc:'Bot ativo'},
